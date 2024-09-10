@@ -2,13 +2,13 @@ import os
 import json
 import datetime
 
-class MyTodo:
+class TaskTracker:
     def __init__(self) -> None:
 
         self.JSON_PATH = 'tasks.json'
         self.create_json()
 
-    # Create a json to store tasks if json file not exists
+    # Create a JSON file to store tasks if the file does not exist
     def create_json(self):        
 
         if not os.path.exists(self.JSON_PATH):
@@ -19,7 +19,7 @@ class MyTodo:
         
         return 0
 
-    # Verify the last task id in json file
+    # Verify and get the last task ID from the JSON file
     def get_last_id(self):
 
         with open(self.JSON_PATH, 'r', encoding="UTF-8") as tasks_json:
@@ -33,7 +33,7 @@ class MyTodo:
 
         return last_id
     
-    # Add new task to json file
+    # Add a new task to the JSON file
     def add_task(self, description, status):
         last_id = self.get_last_id()
 
@@ -60,8 +60,23 @@ class MyTodo:
         with open(self.JSON_PATH, 'w', encoding="UTF-8") as tasks_json:
             json.dump(tasks, tasks_json, indent=4, ensure_ascii=False)
 
+        print(f"Task added successfully (ID: {new_id})")
 
+    # Function to update task descriptions
+    def update_task(self, task_id, new_description):
+        with open(self.JSON_PATH, 'r', encoding="UTF-8") as tasks_json:
+            tasks = json.load(tasks_json)
 
-todo = MyTodo()
+        for task in tasks:
+            if task['id'] == task_id:
+                task['description'] = new_description
+                date_now = datetime.datetime.now().strftime("%Y/%m/%d - %H:%M:%S")
+                task['updateAt'] = date_now
 
-todo.add_task('test description', 'pending')
+        with open(self.JSON_PATH, 'w', encoding="UTF-8") as tasks_json:
+            json.dump(tasks, tasks_json, indent=4, ensure_ascii=False)
+                
+
+task_tracker = TaskTracker()
+
+task_tracker.update_task(1, 'updated description 1')
