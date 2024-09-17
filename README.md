@@ -7,7 +7,7 @@ Task tracker is a project used to track and manage your tasks. A simple command 
 - [x] Function to create a JSON file to store tasks
 - [x] Functions to add, update, and delete tasks
 - [x] Functions to mark tasks as "in-progress" or "done"
-- [ ] Functions to list all tasks, not done tasks, done tasks, and in-progress tasks
+- [x] Functions to list all tasks, not done tasks, done tasks, and in-progress tasks
 - [ ] Handle errors and edge cases
 
 ## Technology Stack
