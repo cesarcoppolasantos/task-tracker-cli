@@ -20,25 +20,58 @@ class TaskTracker:
 
     # Function to read JSON file
     def read_json(self):
-        with open(self.JSON_PATH, 'r', encoding='UTF-8') as tasks_json:
-            tasks = json.load(tasks_json)
+        try:
+            with open(self.JSON_PATH, 'r', encoding='UTF-8') as tasks_json:
+                tasks = json.load(tasks_json)
 
-        return tasks
+            return tasks
+        
+        except FileNotFoundError as e:
+            print(f"File not found: {e}")
+            return 0
+
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return 0
+        
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return 0
     
     # Function to write JSON file
     def write_json(self, tasks):
-        with open(self.JSON_PATH, 'w', encoding='UTF-8') as tasks_json:
-            json.dump(tasks, tasks_json, indent=4, ensure_ascii=False)
+        try:
+            with open(self.JSON_PATH, 'w', encoding='UTF-8') as tasks_json:
+                json.dump(tasks, tasks_json, indent=4, ensure_ascii=False)
+
+            return 1
+        
+        except IOError as e:
+            print(f"I/O error occurred while writing to the file. {e}")
+            return 0
+        
+        except ValueError as e:
+            print(f"Value error occurred while serializing data. {e}")
+            return 0
+        
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return 0
 
     # Function to get the current date in ISO format
     def get_current_date(self):
-        current_date = datetime.datetime.now()
-        current_date = current_date.isoformat()
+        try:
+            current_date = datetime.datetime.now()
+            current_date = current_date.isoformat()
 
-        return current_date
+            return current_date
+        
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return None
     
     # Verify and get the last task ID from the JSON file
-    def get_last_id(self):        
+    def get_last_id(self):   
         tasks = self.read_json()
 
         if tasks:
@@ -118,6 +151,26 @@ class TaskTracker:
 
         self.write_json(tasks)
 
+    # Function to list all tasks or filter by status
+    # Valid statuses: all, todo, in-progress, done
+    def list_tasks(self, status):
+        tasks = self.read_json()
+
+        valid_statuses = ['all', 'todo', 'in-progress', 'done']
+
+        if status not in valid_statuses:
+            print(f"'{status}' is an invalid status. Please choose 'all', 'todo', 'in-progress' or 'done'.")
+            return None
+        
+        if status == 'all':
+            for task in tasks:
+                print(f'\n{task}\n')
+
+        else:
+            for task in tasks:
+                if task['status'] == status:
+                    print(f'\n{task}\n')
+
 task_tracker = TaskTracker()
 
-task_tracker.make_done(8)
+task_tracker.list_tasks('done')
