@@ -10,13 +10,20 @@ class TaskTracker:
 
     # Create a JSON file to store tasks if the file does not exist
     def create_json(self):
-        if not os.path.exists(self.JSON_PATH):
-            with open(self.JSON_PATH, 'w') as tasks_json:
-                json.dump([], tasks_json)
+        try:
+            if not os.path.exists(self.JSON_PATH):
+                with open(self.JSON_PATH, 'w') as tasks_json:
+                    json.dump([], tasks_json)
+            
+                return (1, "Success: JSON file created.")
+            
+            return (0, "Info: JSON file already exists.")
         
-            return 1
+        except PermissionError:
+            return (-1, "No permission to create JSON file.")
         
-        return 0
+        except OSError as e:
+            return (-2, f"OS Issue ocorred - {e}")
 
     # Function to read JSON file
     def read_json(self):
@@ -27,16 +34,13 @@ class TaskTracker:
             return tasks
         
         except FileNotFoundError as e:
-            print(f"File not found: {e}")
-            return 0
+            return (-4, f"File not found - {e}")
 
         except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
-            return 0
+            return (-10, f"Error decoding JSON - {e}")
         
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            return 0
+            return (-55, f"An unexpected error occurred - {e}")
     
     # Function to write JSON file
     def write_json(self, tasks):
@@ -44,19 +48,16 @@ class TaskTracker:
             with open(self.JSON_PATH, 'w', encoding='UTF-8') as tasks_json:
                 json.dump(tasks, tasks_json, indent=4, ensure_ascii=False)
 
-            return 1
+            return (1, 'Success: JSON written.')
         
-        except IOError as e:
-            print(f"I/O error occurred while writing to the file. {e}")
-            return 0
+        except OSError as e:
+            return (-3, f"Error occurred while writing to the file - {e}")
         
         except ValueError as e:
-            print(f"Value error occurred while serializing data. {e}")
-            return 0
+            return (-5, f"Value error occurred while serializing data - {e}")
         
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            return 0
+            return (-55, f"An unexpected error occurred - {e}")
 
     # Function to get the current date in ISO format
     def get_current_date(self):
@@ -67,19 +68,31 @@ class TaskTracker:
             return current_date
         
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-            return None
+            return (-55, f"An unexpected error occurred - {e}")
     
     # Verify and get the last task ID from the JSON file
-    def get_last_id(self):   
-        tasks = self.read_json()
-
-        if tasks:
-            last_id = max(task['id'] for task in tasks)
-        else:
-            last_id = 0
-
-        return last_id
+    def get_last_id(self):
+        try:
+            tasks = self.read_json()
+            
+            # Check if the reading returned an error code.
+            if isinstance(tasks, list):
+                if tasks:
+                    last_id = max(task['id'] for task in tasks)
+                else:
+                    last_id = 0
+                return last_id
+            else:
+                return tasks  # Return the error code from read_json.
+        
+        except KeyError:
+            return (-20, "Error: 'id' key not found in a task.")
+        
+        except TypeError:
+            return (-21, "Error: Invalid data type encountered.")
+        
+        except Exception as e:
+            return (-55, f"An unexpected error occurred - {e}")
     
     # Add a new task to the JSON file
     def add_task(self, description):
