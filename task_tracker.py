@@ -1,6 +1,8 @@
 import os
 import json
 import datetime
+import argparse
+
 
 class TaskTracker:
     def __init__(self) -> None:
@@ -106,7 +108,7 @@ class TaskTracker:
 
             task_format = {"id": new_id, 
                             "description": description, 
-                            "status": 'todo', 
+                            "status": 'todo', # Status "todo" set as default.
                             "createdAt": current_date, 
                             "updateAt": current_date}
 
@@ -220,7 +222,65 @@ class TaskTracker:
         except Exception as e:
             return (0, f"An unexpected error occurred - {e}")
         
-        
-task_tracker = TaskTracker()
+    @staticmethod
+    def cli():
 
-task_tracker.list_tasks('todo')
+        parser = argparse.ArgumentParser(description='Task Tracker CLI')
+
+        # Defining the subcommands for the CLI
+        subparsers = parser.add_subparsers(dest='command', help='Available commands')
+
+        # Command to add a task
+        parser_add = subparsers.add_parser('add-task', help='Add a new task')
+        parser_add.add_argument('description', type=str, help='Task description')
+
+        # Command to delete a task
+        parser_delete = subparsers.add_parser('delete-task', help='Delete a task')
+        parser_delete.add_argument('task_id', type=int, help='Task ID to delete')
+
+        # Command to update a task
+        parser_update = subparsers.add_parser('update-task', help='Update task description')
+        parser_update.add_argument('task_id', type=int, help='Task ID to update')
+        parser_update.add_argument('description', type=str, help='New task description')
+
+        # Command to list tasks
+        parser_list = subparsers.add_parser('list-tasks', help='List tasks by status')
+        parser_list.add_argument('status', type=str, choices=['all', 'todo', 'in-progress', 'done'], help='Task status to list')
+
+        # Command to mark a task as in-progress
+        parser_in_progress = subparsers.add_parser('make-in-progress', help='Mark task as in-progress')
+        parser_in_progress.add_argument('task_id', type=int, help='Task ID to mark as in-progress')
+
+        # Command to mark a task as done
+        parser_done = subparsers.add_parser('make-done', help='Mark task as done')
+        parser_done.add_argument('task_id', type=int, help='Task ID to mark as done')
+
+        # Parsing the arguments provided by the user
+        args = parser.parse_args()
+
+        # Creating an instance of TaskTracker
+        task_tracker = TaskTracker()
+
+        try:
+            # Executing the function corresponding to the command
+            if args.command == 'add-task':
+                task_tracker.add_task(args.description)
+            elif args.command == 'delete-task':
+                task_tracker.delete_task(args.task_id)
+            elif args.command == 'update-task':
+                task_tracker.update_task(args.task_id, args.description)
+            elif args.command == 'list-tasks':
+                task_tracker.list_tasks(args.status)
+            elif args.command == 'make-in-progress':
+                task_tracker.make_in_progress(args.task_id)
+            elif args.command == 'make-done':
+                task_tracker.make_done(args.task_id)
+            else:
+                parser.print_help()
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
+
+
+if __name__ == "__main__":
+    TaskTracker.cli()
