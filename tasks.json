@@ -2,14 +2,14 @@
     {
         "id": 1,
         "description": "updated description 1",
-        "status": "pending",
+        "status": "todo",
         "createdAt": "2024/09/07 - 23:24:21",
         "updateAt": "2024/09/10 - 00:54:42"
     },
     {
         "id": 2,
-        "description": "testing updateAt with iso format",
-        "status": "pending",
+        "description": "testing update At with iso format",
+        "status": "todo",
         "createdAt": "2024/09/07 - 23:24:21",
         "updateAt": "2024-09-10T17:38:13.307182"
     },
