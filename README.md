@@ -17,7 +17,7 @@ Task tracker is a project used to track and manage your tasks. A simple command 
 ```
 
 
-## How to Use
+## How to Run
 
 1. To start the Task Tracker CLI, simply run the Python file where the TaskTracker class is implemented. In the terminal, use the following command:
 ### Windows
