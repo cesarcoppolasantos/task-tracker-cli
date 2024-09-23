@@ -20,10 +20,10 @@ class TaskTracker:
             return (0, "Info: JSON file already exists.")
         
         except PermissionError:
-            return (-1, "No permission to create JSON file.")
+            return (0, "No permission to create JSON file.")
         
         except OSError as e:
-            return (-2, f"OS Issue ocorred - {e}")
+            return (0, f"OS Issue ocorred - {e}")
 
     # Function to read JSON file
     def read_json(self):
@@ -34,13 +34,13 @@ class TaskTracker:
             return tasks
         
         except FileNotFoundError as e:
-            return (-4, f"File not found - {e}")
+            return (0, f"File not found - {e}")
 
         except json.JSONDecodeError as e:
-            return (-10, f"Error decoding JSON - {e}")
+            return (0, f"Error decoding JSON - {e}")
         
         except Exception as e:
-            return (-55, f"An unexpected error occurred - {e}")
+            return (0, f"An unexpected error occurred - {e}")
     
     # Function to write JSON file
     def write_json(self, tasks):
@@ -51,13 +51,13 @@ class TaskTracker:
             return (1, 'Success: JSON written.')
         
         except OSError as e:
-            return (-3, f"Error occurred while writing to the file - {e}")
+            return (0, f"Error occurred while writing to the file - {e}")
         
         except ValueError as e:
-            return (-5, f"Value error occurred while serializing data - {e}")
+            return (0, f"Value error occurred while serializing data - {e}")
         
         except Exception as e:
-            return (-55, f"An unexpected error occurred - {e}")
+            return (0, f"An unexpected error occurred - {e}")
 
     # Function to get the current date in ISO format
     def get_current_date(self):
@@ -68,7 +68,7 @@ class TaskTracker:
             return current_date
         
         except Exception as e:
-            return (-55, f"An unexpected error occurred - {e}")
+            return (0, f"An unexpected error occurred - {e}")
     
     # Verify and get the last task ID from the JSON file
     def get_last_id(self):
@@ -86,104 +86,141 @@ class TaskTracker:
                 return tasks  # Return the error code from read_json.
         
         except KeyError:
-            return (-20, "Error: 'id' key not found in a task.")
+            return (0, "Error: 'id' key not found in a task.")
         
         except TypeError:
-            return (-21, "Error: Invalid data type encountered.")
+            return (0, "Error: Invalid data type encountered.")
         
         except Exception as e:
-            return (-55, f"An unexpected error occurred - {e}")
+            return (0, f"An unexpected error occurred - {e}")
     
     # Add a new task to the JSON file
     def add_task(self, description):
-        last_id = self.get_last_id()
+        try:
+            last_id = self.get_last_id()
 
-        new_id = last_id + 1
-        description = description
+            new_id = last_id + 1
+            description = description
 
-        current_date = self.get_current_date()
+            current_date = self.get_current_date()
 
-        task_format = {"id": new_id, 
-                        "description": description, 
-                        "status": 'todo', 
-                        "createdAt": current_date, 
-                        "updateAt": current_date}
+            task_format = {"id": new_id, 
+                            "description": description, 
+                            "status": 'todo', 
+                            "createdAt": current_date, 
+                            "updateAt": current_date}
 
-        tasks = self.read_json()
+            tasks = self.read_json()
 
-        tasks.append(task_format)
+            tasks.append(task_format)
 
-        self.write_json(tasks)
+            self.write_json(tasks)
 
-        print(f"Task added successfully (ID: {new_id})")
+            print(f"Task added successfully (ID: {new_id})")
+
+            return (1, f"Success: Task added successfully (ID: {new_id})")
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
 
     # Function for deleting a task
-    def delete_task(self, task_id):        
-        tasks = self.read_json()
+    def delete_task(self, task_id):     
+        try:   
+            tasks = self.read_json()
 
-        tasks = [task for task in tasks if task['id'] != task_id]
+            tasks = [task for task in tasks if task['id'] != task_id]
 
-        self.write_json(tasks)
+            self.write_json(tasks)
+
+            return (1, f"Success: Task with ID {task_id} deleted.")
+
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
 
     # Function to update tasks descriptions
     def update_task(self, task_id, new_description):
-        tasks = self.read_json()
+        try:
+            tasks = self.read_json()
 
-        current_date = self.get_current_date()
+            current_date = self.get_current_date()
 
-        tasks = [
-            {**task, "description": new_description, "updateAt": current_date} 
-            if task['id'] == task_id else task for task in tasks
-        ]
+            tasks = [
+                {**task, "description": new_description, "updateAt": current_date} 
+                if task['id'] == task_id else task for task in tasks
+            ]
 
-        self.write_json(tasks)
-
+            self.write_json(tasks)
+            
+            return (1, f"Success: Task with ID {task_id} updated.")
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
+        
     # Function to mark task as in-progress
     def make_in_progress(self, task_id):
-        tasks = self.read_json()
+        try:
+            tasks = self.read_json()
 
-        current_date = self.get_current_date()
+            current_date = self.get_current_date()
 
-        tasks = [
-            {**task, "status": 'in-progress', "updateAt": current_date} 
-            if task['id'] == task_id else task for task in tasks
-        ]
+            tasks = [
+                {**task, "status": 'in-progress', "updateAt": current_date} 
+                if task['id'] == task_id else task for task in tasks
+            ]
 
-        self.write_json(tasks)
+            self.write_json(tasks)
 
+            return (1, f"Success: Task with ID {task_id} updated.")
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
+        
     # Function to mark task as done
     def make_done(self, task_id):
-        tasks = self.read_json()
+        try:
+            tasks = self.read_json()
 
-        current_date = self.get_current_date()
+            current_date = self.get_current_date()
 
-        tasks = [
-            {**task, "status": 'done', "updateAt": current_date} 
-            if task['id'] == task_id else task for task in tasks
-        ]
+            tasks = [
+                {**task, "status": 'done', "updateAt": current_date} 
+                if task['id'] == task_id else task for task in tasks
+            ]
 
-        self.write_json(tasks)
+            self.write_json(tasks)
+
+            return (1, f"Success: Task with ID {task_id} updated.")
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
 
     # Function to list all tasks or filter by status
     # Valid statuses: all, todo, in-progress, done
     def list_tasks(self, status):
-        tasks = self.read_json()
+        try:
+            tasks = self.read_json()
 
-        valid_statuses = ['all', 'todo', 'in-progress', 'done']
+            valid_statuses = ['all', 'todo', 'in-progress', 'done']
 
-        if status not in valid_statuses:
-            print(f"'{status}' is an invalid status. Please choose 'all', 'todo', 'in-progress' or 'done'.")
-            return None
-        
-        if status == 'all':
-            for task in tasks:
-                print(f'\n{task}\n')
-
-        else:
-            for task in tasks:
-                if task['status'] == status:
+            if status not in valid_statuses:
+                print(f"'{status}' is an invalid status. Please choose 'all', 'todo', 'in-progress' or 'done'.")
+                return None
+            
+            if status == 'all':
+                for task in tasks:
                     print(f'\n{task}\n')
 
+            else:
+                for task in tasks:
+                    if task['status'] == status:
+                        print(f'\n{task}\n')
+
+            return (1, f"Success: Tasks listed.")
+        
+        except Exception as e:
+            return (0, f"An unexpected error occurred - {e}")
+        
+        
 task_tracker = TaskTracker()
 
-task_tracker.list_tasks('done')
+task_tracker.list_tasks('todo')
