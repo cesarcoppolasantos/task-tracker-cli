@@ -80,9 +80,6 @@ Task tracker is a project used to track and manage your tasks. A simple command 
   python3 task_tracker.py make-done <task id>
   ...
 ```
-
-#### Feel free to make any additional adjustments!
-
 ## Progress Checklist
 
 - [x] Function to create a JSON file to store tasks
@@ -90,6 +87,8 @@ Task tracker is a project used to track and manage your tasks. A simple command 
 - [x] Functions to mark tasks as "in-progress" or "done"
 - [x] Functions to list all tasks, not done tasks, done tasks, and in-progress tasks
 - [x] Handle errors and edge cases
+
+#### Feel free to make any additional adjustments!
 
 ## Technology Stack
 
