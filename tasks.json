@@ -58,8 +58,15 @@
     {
         "id": 10,
         "description": "more tests",
-        "status": "todo",
+        "status": "done",
         "createdAt": "2024-09-10T18:03:26.802835",
-        "updateAt": "2024-09-10T18:03:26.802835"
+        "updateAt": "2024-09-22T22:42:51.877177"
+    },
+    {
+        "id": 11,
+        "description": "cli test",
+        "status": "todo",
+        "createdAt": "2024-09-22T22:31:53.797861",
+        "updateAt": "2024-09-22T22:31:53.797861"
     }
 ]
